@@ -62,6 +62,9 @@
                 if (res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'Dashboard';
                     document.querySelector('main').innerHTML = res.data.myContent;
+                } else {
+                    localStorage.removeItem('jwt');
+                    window.location.href = '/';
                 }
 
             });
@@ -77,9 +80,33 @@
                 if (res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'settings';
                     document.querySelector('main').innerHTML = res.data.myContent;
-                } 
+                } else {
+                    localStorage.removeItem('jwt');
+                    window.location.href = '/';
+                }
             });
         }
+        function loadContent(page) {
+            if (page === 'dashboard') {
+                getDashboard();
+            } else if (page === 'settings') {
+                getSettings();
+            }
+        }
+
+
+        function checkTokenExpiration() {
+        const token = localStorage.getItem('jwt');
+        if (token) {
+            const decodedToken = jwt.decode(token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (decodedToken.exp < currentTime) {
+                
+                window.location.href = '/';
+            }
+        }
+    }
+     window.onload = checkTokenExpiration;
     </script>
 </body>
 </html>
